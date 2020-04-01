@@ -56,3 +56,9 @@ class World():
         Function draws the bot on the map
         """
         circle(self.world_json["bot_start"][0], self.world_json["bot_start"][1], 10)
+        
+    def draw_player(self):
+        """
+        Function draws the bot on the map
+        """
+        circle(self.world_json["player_start"][0], self.world_json["player_start"][1], 10)

@@ -49,6 +49,17 @@ def setup():
     world.draw_bot()
     knightLocation = worldJson["bot_start"]
     
+def keyPressed():
+    if keyPressed and key == CODED:
+        if keyCode == UP:
+            world.world_json["player_start"][1] -= 1
+        elif keyCode == DOWN:
+            world.world_json["player_start"][1] += 1
+        elif keyCode == LEFT:
+            world.world_json["player_start"][0] -= 1
+        elif keyCode == RIGHT:
+            world.world_json["player_start"][0] += 1
+
 def mousePressed():
     """
     Function that gets triggered on mouse press
@@ -81,3 +92,4 @@ def draw():
         world.world_json["bot_start"] = knightLocation
         counter += 1
     world.draw_bot()
+    world.draw_player()
