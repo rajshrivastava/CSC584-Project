@@ -1,5 +1,6 @@
 import json
 from module import World
+from algorithm import *
 
 def readJson(filename):
     """
@@ -24,18 +25,59 @@ def loadJson(data):
         print "Error loading json: {}".format(str(e))
 
 world = None
+pathFinderObject = None
+finalPath = []
+final_x = 25
+final_y = 290
+knightLocation = []
+counter = 0
+maxCount = 0
 def setup():
     """
     setup function for the game
     """
     global world
+    global pathFinderObject
+    global knightLocation
     size(640, 480)
+    pathFinderObject = pathFinder(640, 480)
     fileData = readJson('map.json')
     worldJson = loadJson(fileData)
     world = World(worldJson)
     gameSize = world.set_background_color()
     world.draw_all_obstacles()
     world.draw_bot()
+    knightLocation = worldJson["bot_start"]
     
+def mousePressed():
+    """
+    Function that gets triggered on mouse press
+    """
+    # global final_x
+    # global final_y
+    global knightLocation
+    global finalPath
+    global maxCount
+    global counter
+    print knightLocation
+    finalPath = pathFindDijkstra(pathFinderObject, (knightLocation[0],knightLocation[1]), (mouseX, mouseY))
+    if not finalPath:
+        print("inaccessible")
+        return
+    counter = 0
+    maxCount = len(finalPath)
+    knightLocation[0] = mouseX
+    knightLocation[1] = mouseY
+
 def draw():
+    """
+    draw function for the game
+    """
+    global knightLocation
+    global counter
+    global maxCount
+    if finalPath and counter < maxCount:
+        knightLocation = list(finalPath[counter])
+        world.world_json["bot_start"] = knightLocation
+        counter += 1
     world.draw_bot()
