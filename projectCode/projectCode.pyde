@@ -1,5 +1,5 @@
 import json
-from module import World
+from module import *
 from algorithm import *
 
 def readJson(filename):
@@ -24,7 +24,9 @@ def loadJson(data):
     except Exception as e:
         print "Error loading json: {}".format(str(e))
 
-world = None
+world_object = None
+player_object = None
+bot_object = None
 pathFinderObject = None
 finalPath = []
 final_x = 25
@@ -32,33 +34,53 @@ final_y = 290
 knightLocation = []
 counter = 0
 maxCount = 0
+
 def setup():
     """
     setup function for the game
     """
-    global world
+    global world_object
     global pathFinderObject
     global knightLocation
+    global player_object
     size(640, 480)
     pathFinderObject = pathFinder(640, 480)
     fileData = readJson('map.json')
     worldJson = loadJson(fileData)
-    world = World(worldJson)
-    gameSize = world.set_background_color()
-    world.draw_all_obstacles()
-    world.draw_bot()
+    world_object = World(worldJson)
+    player_object = Player(worldJson["player_start"])
+    bot_object = Bot(worldJson["bot_start"])
+    gameSize = world_object.set_background_color()
+    world_object.draw_all_obstacles()
+    world_object.draw_bot()
     knightLocation = worldJson["bot_start"]
+
+def draw():
+    """
+    draw function for the game
+    """
+    global knightLocation
+    global counter
+    global maxCount
+    global player_object
+    if finalPath and counter < maxCount:
+        knightLocation = list(finalPath[counter])
+        world_object.world_json["bot_start"] = knightLocation
+        counter += 1
+    world_object.draw_bot()
+    player_object.draw_player()
     
 def keyPressed():
     if keyPressed and key == CODED:
+        new_location = player_object.current_location
         if keyCode == UP:
-            world.world_json["player_start"][1] -= 1
+            player_object.update_current_location([new_location[0], new_location[1]-1])
         elif keyCode == DOWN:
-            world.world_json["player_start"][1] += 1
+            player_object.update_current_location([new_location[0], new_location[1]+1])
         elif keyCode == LEFT:
-            world.world_json["player_start"][0] -= 1
+            player_object.update_current_location([new_location[0]-1, new_location[1]])
         elif keyCode == RIGHT:
-            world.world_json["player_start"][0] += 1
+            player_object.update_current_location([new_location[0]+1, new_location[1]])
 
 def mousePressed():
     """
@@ -79,17 +101,3 @@ def mousePressed():
     maxCount = len(finalPath)
     knightLocation[0] = mouseX
     knightLocation[1] = mouseY
-
-def draw():
-    """
-    draw function for the game
-    """
-    global knightLocation
-    global counter
-    global maxCount
-    if finalPath and counter < maxCount:
-        knightLocation = list(finalPath[counter])
-        world.world_json["bot_start"] = knightLocation
-        counter += 1
-    world.draw_bot()
-    world.draw_player()

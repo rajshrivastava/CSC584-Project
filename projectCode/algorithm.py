@@ -3,7 +3,7 @@ from heapq import *
 
 class pathFinder():
     """
-    Class for finding nearby connetions for 
+    Class for finding nearby connetions for
     a node on the canvas
     """
     def __init__(self, x, y):
