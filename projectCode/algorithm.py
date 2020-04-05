@@ -109,3 +109,13 @@ class pathFinder():
                         heappush(openList, (fScore[connection], connection))
                         openSet.add(connection)
         return False
+
+    def rBFS_utility(self, current, goal, fLimit, parent):
+        if current == goal:
+            return current, fLimit
+        successors = self.getConnections(current)
+        if not successors:
+            return None, float('inf')
+
+    def pathFindRecursiveBestFirstSearch(self, start, goal):
+        self.rBFS_utility(start, oal, float('inf'), None)

@@ -2,6 +2,11 @@ import json
 from module import *
 from algorithm import *
 
+world_object = None
+player_object = None
+bot_objects = None
+botMovement_object = None
+
 def readJson(filename):
     """
     Reads the file and returns file content
@@ -23,11 +28,6 @@ def loadJson(data):
         return data
     except Exception as e:
         print "Error loading json: {}".format(str(e))
-
-world_object = None
-player_object = None
-bot_objects = None
-botMovement_object = None
 
 def setup():
     """
