@@ -47,22 +47,15 @@ def setup():
     for i in range(bot_count):
         bot_objects.append(Bot(worldJson["bot_start"][i]))
     botMovement_object = BotMovement(bot_objects, bot_count)
-    gameSize = world_object.set_background_color()
+    world_object.set_background_color()
     world_object.draw_all_obstacles()
-    knightLocation = worldJson["bot_start"]
 
 def draw():
     """
     draw function for the game
     """
-    global world_object
     global player_object
-    global bot_objects
     global botMovement_object
-    if finalPath and counter < maxCount:
-        knightLocation = list(finalPath[counter])
-        world_object.world_json["bot_start"] = knightLocation
-        counter += 1
     player_object.draw_player()
     botMovement_object.move_bots()
     
