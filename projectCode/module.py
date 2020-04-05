@@ -153,34 +153,53 @@ class BotMovement():
     Class to make sure all the bots are in moving state
     """
     def __init__(self, bot_objects, count):
+        """
+        Initializes class with all the bot objects
+        and bots count
+        """
         self.bots = bot_objects
         self.bot_count = count
-        
+        self.current_state = 'random'
+        self.available_state = ['random', 'guard', 'chase']
+        self.pathFinderObject = pathFinder(width, height)
+    
+    def find_bot_path(self, bot_object):
+        """
+        Function to move the bot
+        """
+        start_location = tuple(bot_object.current_location)
+        goal_location = tuple(bot_object.destination)
+        path = self.pathFinderObject.pathFindAstar(start_location, goal_location)
+        if not path:
+            print("inaccessible")
+            return
+        bot_object.path_traversing = path
+        bot_object.path_index = 0
+        bot_object.max_path_index = len(path)
+        bot_object.is_moving = True
+            
     def move_bots(self):
-        for i in range(self.bot_count):
-            if self.bots[i].is_moving:
-                self.bots[i].move_bot()
-                self.bots[i].draw_bot()
-            else:
-                self.bots[i].destination = [random.randrange(0,640), random.randrange(0, 480)]
-                # print self.bots[i].destination
-                find_bot_path(self.bots[i])
-                
-pathFinderObject = None
-
-def find_bot_path(bot_object):
-    """
-    Function to move the bot
-    """
-    global pathFinderObject
-    pathFinderObject = pathFinder(640, 480)
-    start_location = tuple(bot_object.current_location)
-    goal_location = tuple(bot_object.destination)
-    path = pathFindDijkstra(pathFinderObject, start_location, goal_location)
-    if not path:
-        print("inaccessible")
-        return
-    bot_object.path_traversing = path
-    bot_object.path_index = 0
-    bot_object.max_path_index = len(path)
-    bot_object.is_moving = True
+        """
+        Function that moves all the bots acroos
+        the canvas
+        """
+        if self.current_state == 'random':
+            for i in range(self.bot_count):
+                if self.bots[i].is_moving:
+                    self.bots[i].move_bot()
+                    self.bots[i].draw_bot()
+                else:
+                    self.bots[i].destination = [random.randrange(0,640), random.randrange(0, 480)]
+                    # print self.bots[i].destination
+                    self.find_bot_path(self.bots[i])
+        elif self.current_state == 'guard':
+            """
+            to make all the bots guard the treasure
+            """
+            pass
+        elif self.current_state == 'chase':
+            """
+            to make all the bots chase the player bot
+            once in the vicinity/range
+            """
+            pass
