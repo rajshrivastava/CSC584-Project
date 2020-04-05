@@ -1,7 +1,7 @@
 {
 	"canvas_size": [640, 480],
 	"canvas_color": 255,
-	"bot_start": [290, 25],
+	"bot_start": [[5, 475]],
 	"player_start": [25, 290],
 	"obstacles": {
 		"lake1": [

@@ -71,6 +71,8 @@ def pathFindDijkstra(pathFinderObject, start, goal):
     """
     Algorithm for finding the paht from start to 
     goal location using A-star algorithm
+    
+    TODO: return the length of path, to reduce computation
     """
     openList = []
     openSet = set()

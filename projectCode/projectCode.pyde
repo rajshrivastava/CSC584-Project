@@ -26,8 +26,10 @@ def loadJson(data):
 
 world_object = None
 player_object = None
-bot_object = None
-pathFinderObject = None
+bot_objects = None
+botMovement_object = None
+
+
 finalPath = []
 final_x = 25
 final_y = 290
@@ -40,19 +42,24 @@ def setup():
     setup function for the game
     """
     global world_object
-    global pathFinderObject
+    # global pathFinderObject
     global knightLocation
     global player_object
+    global bot_objects
+    global botMovement_object
     size(640, 480)
-    pathFinderObject = pathFinder(640, 480)
     fileData = readJson('map.json')
     worldJson = loadJson(fileData)
     world_object = World(worldJson)
     player_object = Player(worldJson["player_start"])
-    bot_object = Bot(worldJson["bot_start"])
+    bot_count = len(worldJson["bot_start"])
+    bot_objects = list()
+    for i in range(bot_count):
+        bot_objects.append(Bot(worldJson["bot_start"][i]))
+    botMovement_object = BotMovement(bot_objects, bot_count)
     gameSize = world_object.set_background_color()
     world_object.draw_all_obstacles()
-    world_object.draw_bot()
+    # world_object.draw_bot()
     knightLocation = worldJson["bot_start"]
 
 def draw():
@@ -63,14 +70,17 @@ def draw():
     global counter
     global maxCount
     global player_object
+    global bot_objects
+    global botMovement_object
     if finalPath and counter < maxCount:
         knightLocation = list(finalPath[counter])
         world_object.world_json["bot_start"] = knightLocation
         counter += 1
-    world_object.draw_bot()
     player_object.draw_player()
+    botMovement_object.move_bots()
     
 def keyPressed():
+    global player_object
     if keyPressed and key == CODED:
         new_location = player_object.current_location
         if keyCode == UP:
@@ -86,18 +96,13 @@ def mousePressed():
     """
     Function that gets triggered on mouse press
     """
-    # global final_x
-    # global final_y
-    global knightLocation
-    global finalPath
-    global maxCount
-    global counter
-    print knightLocation
-    finalPath = pathFindDijkstra(pathFinderObject, (knightLocation[0],knightLocation[1]), (mouseX, mouseY))
-    if not finalPath:
+    global pathFinderObject
+    start_location = tuple(bot_objects[0].current_location)
+    goal_location = (mouseX, mouseY)
+    path = pathFindDijkstra(pathFinderObject, start_location, goal_location)
+    if not path:
         print("inaccessible")
         return
-    counter = 0
-    maxCount = len(finalPath)
-    knightLocation[0] = mouseX
-    knightLocation[1] = mouseY
+    bot_objects[0].path_traversing = path
+    bot_objects[0].path_index = 0
+    bot_objects[0].max_path_index = len(path)

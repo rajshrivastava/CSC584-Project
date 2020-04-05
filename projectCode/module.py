@@ -1,3 +1,6 @@
+import random
+from algorithm import *
+
 class World():
     """
     Class for handling the map 
@@ -62,7 +65,7 @@ class World():
         Function draws the bot on the map
         """
         circle(self.world_json["player_start"][0], self.world_json["player_start"][1], 10)
-
+    
 class Player():
     """
     Class to account location for the player
@@ -71,6 +74,8 @@ class Player():
         """
         Function that initializes the class with
         given start location
+        last_location: list containing location
+        current_location: list containing location
         """
         self.last_location = None
         self.current_location = start_location
@@ -104,10 +109,15 @@ class Bot():
         """
         Function that initializes the class with
         given start locations
+        last_location : list containing locations
+        current_location: list containing locations
         """
-        self.bot_count = None
-        self.last_location = list()
+        self.last_location = None
         self.current_location = start_location
+        self.path_traversing = None
+        self.path_index = None
+        self.is_moving = False
+        self.destination = None
 
     def update_location(self, new_location):
         """
@@ -115,9 +125,15 @@ class Bot():
         stores the previous one for reference for all
         the bots
         """
-        for i in range(self.bot_count):
-            self.last_location[i] = self.current_location[i]
-            self.current_location[i] = new_location[i]
+        self.last_location = self.current_location
+        self.current_location = new_location
+
+    def move_bot(self):
+        if self.path_traversing and self.path_index < self.max_path_index:
+            self.update_location(list(self.path_traversing[self.path_index]))
+            self.path_index += 1
+        else:
+            self.is_moving = False
 
     def draw_bot(self):
         """
@@ -125,10 +141,46 @@ class Bot():
         location and removes all the old bot objects from
         previous location
         """
-        for i in range(len(self.bot_count)):
-            stroke(255)
-            if self.last_location:
-                fill(255)
-                circle(self.last_location[i][0], self.last_location[i][1], 10)
-            fill(0)
-            circle(self.current_location[i][0], self.current_location[i][1], 10)
+        stroke(255)
+        if self.last_location:
+            fill(255)
+            circle(self.last_location[0], self.last_location[1], 10)
+        fill(100)
+        circle(self.current_location[0], self.current_location[1], 10)
+        
+class BotMovement():
+    """
+    Class to make sure all the bots are in moving state
+    """
+    def __init__(self, bot_objects, count):
+        self.bots = bot_objects
+        self.bot_count = count
+        
+    def move_bots(self):
+        for i in range(self.bot_count):
+            if self.bots[i].is_moving:
+                self.bots[i].move_bot()
+                self.bots[i].draw_bot()
+            else:
+                self.bots[i].destination = [random.randrange(0,640), random.randrange(0, 480)]
+                # print self.bots[i].destination
+                find_bot_path(self.bots[i])
+                
+pathFinderObject = None
+
+def find_bot_path(bot_object):
+    """
+    Function to move the bot
+    """
+    global pathFinderObject
+    pathFinderObject = pathFinder(640, 480)
+    start_location = tuple(bot_object.current_location)
+    goal_location = tuple(bot_object.destination)
+    path = pathFindDijkstra(pathFinderObject, start_location, goal_location)
+    if not path:
+        print("inaccessible")
+        return
+    bot_object.path_traversing = path
+    bot_object.path_index = 0
+    bot_object.max_path_index = len(path)
+    bot_object.is_moving = True
