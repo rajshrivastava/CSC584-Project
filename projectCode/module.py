@@ -79,6 +79,7 @@ class Player():
         """
         self.last_location = None
         self.current_location = start_location
+        self.speed = 2
 
     def update_current_location(self, new_location):
         """
@@ -118,6 +119,8 @@ class Bot():
         self.path_index = None
         self.is_moving = False
         self.destination = None
+        self.speed = 2
+        
 
     def update_location(self, new_location):
         """
@@ -131,7 +134,7 @@ class Bot():
     def move_bot(self):
         if self.path_traversing and self.path_index < self.max_path_index:
             self.update_location(list(self.path_traversing[self.path_index]))
-            self.path_index += 1
+            self.path_index += self.speed
         else:
             self.is_moving = False
 
