@@ -121,7 +121,7 @@ class Bot():
         self.destination = None
         self.speed = 2
         
-    def update_location(self, new_location)
+    def update_location(self, new_location):
         """
         Function that updates the new_location and also
         stores the previous one for reference for all
@@ -171,7 +171,8 @@ class BotMovement():
         """
         start_location = tuple(bot_object.current_location)
         goal_location = tuple(bot_object.destination)
-        path = self.pathFinderObject.pathFindRecursiveBestFirstSearch(start_location, goal_location)
+        #path = self.pathFinderObject.pathFindRecursiveBestFirstSearch(start_location, goal_location)
+        path = self.pathFinderObject.pathFindAstar(start_location, goal_location)
         if not path:
             print("inaccessible")
             return

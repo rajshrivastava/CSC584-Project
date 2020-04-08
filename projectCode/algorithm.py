@@ -32,8 +32,8 @@ class pathFinder():
             return False
         elif new_y < 0 or new_y > self.maxHeight:
             return False
-        # elif get(new_x, new_y) != -1:
-        #     return False
+        elif get(new_x, new_y) != -1:
+            return False
         else:
             return True
     
