@@ -152,5 +152,9 @@ class pathFinder():
         self.rBFS_gScore = self.getGraphMapEmpty(0)
         self.rBFS_fScore = self.getGraphMapEmpty(0)
         self.rBFS_fScore[start] = self.heuristic(start, goal)
-        self.rBFS_utility(start, float('inf'), None)
+        try:
+            self.rBFS_utility(start, float('inf'), None)
+        except Exception as e:
+            print "maximum recursion depth exceeded"
+            return False
         return self.rBFS_path
