@@ -17,6 +17,10 @@ class pathFinder():
         self.rBFS_gScore = None
         self.rBFS_fScore = None
         self.rBFS_path = None
+        self.enable_logging = True
+        self.maxQueueSizeAStar = 0
+        self.maxQueueSizeRBFS = dict()
+        self.initMaxQueueSizeRBFS()          #added here to cummulate values from all the call, otherwise has to be added in pathFindRecursiveBestFirstSearch
 
     def checkValid(self, fromNode, new_x, new_y):
         """
@@ -71,6 +75,17 @@ class pathFinder():
             for j in range(0,480):
                 map_with_default_values[(i, j)] = defaultValue
         return map_with_default_values
+    
+    def initMaxQueueSizeRBFS(self):
+        for i in range(0,640):
+            for j in range(0,480):
+                self.maxQueueSizeRBFS[(i,j)] = 0
+                
+    def getMaxQueueSizeRBFS(self):
+        totalCount = 0
+        for city in self.maxQueueSizeRBFS.keys():
+            totalCount += self.maxQueueSizeRBFS[city]
+        return totalCount
 
     def pathFindAstar(self, start, goal):
         """
@@ -90,8 +105,10 @@ class pathFinder():
         fScore[start] = self.heuristic(start, goal)
         heappush(openList, (fScore[start], start))
         openSet.add(start)
+        self.maxQueueSizeAStar += 1
         while openList:
             current = heappop(openList)[1]
+            self.maxQueueSizeAStar -= 1
             openSet.discard(current)
             if current == goal:
                 path = []
@@ -100,6 +117,8 @@ class pathFinder():
                     current = cameFrom[current]
                 path.append(start)
                 path.reverse()
+                # print("Total cities expanded in A* algorithm: " + str(self.totalCitiesExpandedAStar()))
+                print("Max Queue Size in A* algorithm: " + str(self.maxQueueSizeAStar))
                 return path
             connections = self.getConnections(current)
             for connection in connections:
@@ -112,9 +131,11 @@ class pathFinder():
                     if connection not in openSet:
                         heappush(openList, (fScore[connection], connection))
                         openSet.add(connection)
+                        self.maxQueueSizeAStar += 1
         return False
 
     def rBFS_utility(self, current, fLimit, parent):
+        tempQueueSize = 0
         if current == self.rBFS_destination:
             return current, fLimit
         successors = self.getConnections(current)
@@ -122,9 +143,15 @@ class pathFinder():
             return None, float('inf')
         successorSet = []
         for successor in successors:
+            tempQueueSize += 1
             self.rBFS_gScore[successor] = self.rBFS_gScore[current] + 1
             self.rBFS_fScore[successor] = max(self.rBFS_gScore[successor] + self.heuristic(successor, self.rBFS_destination), self.rBFS_fScore[current])
             heappush(successorSet, (self.rBFS_fScore[successor], successor))
+        if self.maxQueueSizeRBFS[current] != 0:
+            if self.maxQueueSizeRBFS[current] < tempQueueSize:
+                self.maxQueueSizeRBFS[current] = tempQueueSize
+        else:
+            self.maxQueueSizeRBFS[current] = tempQueueSize
         while True:
             best = heappop(successorSet)
             bestFlimit = best[0]
@@ -147,6 +174,7 @@ class pathFinder():
                     return result, bestFlimit
 
     def pathFindRecursiveBestFirstSearch(self, start, goal):
+        # self.initMaxQueueSizeRBFS()
         self.rBFS_path = list()
         self.rBFS_destination = goal
         self.rBFS_gScore = self.getGraphMapEmpty(0)
@@ -155,6 +183,8 @@ class pathFinder():
         try:
             self.rBFS_utility(start, float('inf'), None)
         except Exception as e:
+            print("Max Queue Size in RBFS algorithm: " + str(self.getMaxQueueSizeRBFS()))
             print "maximum recursion depth exceeded"
             return False
+        print("Max Queue Size in RBFS algorithm: " + str(self.getMaxQueueSizeRBFS()))        
         return self.rBFS_path
