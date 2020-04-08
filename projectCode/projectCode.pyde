@@ -62,7 +62,7 @@ def draw():
     """
     fill(0)
     background(255, 255, 255)
-    map_obj.drawMap()
+    map_obj.drawMap()   
     global player_object
     global botMovement_object
     player_object.draw_player()

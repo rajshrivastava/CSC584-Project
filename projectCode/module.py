@@ -80,7 +80,9 @@ class Player():
         self.last_location = None
         self.current_location = start_location
         self.speed = 2
-
+        self.img = loadShape('images/player.svg')
+        self.img.scale(0.07)
+    
     def update_current_location(self, new_location):
         """
         Function that updates the new_location and also
@@ -89,7 +91,7 @@ class Player():
         self.last_location = self.current_location
         self.current_location = new_location
 
-    def draw_player(self):
+    def draw_player_old(self):
         """
         Function that draws the player object at new location
         and removes the old player object from previous location
@@ -100,6 +102,9 @@ class Player():
             circle(self.last_location[0], self.last_location[1], 10)
         fill(0)
         circle(self.current_location[0], self.current_location[1], 10)
+        
+    def draw_player(self):
+        shape(self.img, self.current_location[0], self.current_location[1])
 
 class Bot():
     """
@@ -120,6 +125,9 @@ class Bot():
         self.is_moving = False
         self.destination = None
         self.speed = 2
+        self.img = loadShape('images/guard1.svg')
+        self.img.scale(0.07)
+        
         
     def update_location(self, new_location):
         """
@@ -137,7 +145,7 @@ class Bot():
         else:
             self.is_moving = False
 
-    def draw_bot(self):
+    def draw_bot_old(self):
         """
         Function that draws all the bot objects at new
         location and removes all the old bot objects from
@@ -149,6 +157,9 @@ class Bot():
             circle(self.last_location[0], self.last_location[1], 10)
         fill(100)
         circle(self.current_location[0], self.current_location[1], 10)
+    
+    def draw_bot(self):
+        shape(self.img, self.current_location[0], self.current_location[1])
         
 class BotMovement():
     """

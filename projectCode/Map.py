@@ -14,16 +14,37 @@ class Map:
         self.dead4Position = None
         self.normal1Position = None
         self.normal2Position = None
-    
+        self.loadData()
         
-    def drawObstacles(self):
+    def loadData(self):    
+        with open('map.json', 'r') as json_file:
+            data = json.load(json_file)  
+       
+        # self.playerPosition = tuple(data['player_start'])
+        # self.guard1Position = tuple(data['guard1'])
+        # self.guard2Position = tuple(data['guard2'])
+        
+        self.obstacles = data['obstacles'].values()
+        
+        #key locations
+        self.safehousePosition = tuple(data['key_locations']['safe_house'])
+        self.treasurePosition = tuple(data['key_locations']['treasure'])
+        self.dead1Position = tuple(data['key_locations']['dead1'])
+        self.dead2Position = tuple(data['key_locations']['dead2'])
+        self.dead3Position = tuple(data['key_locations']['dead3'])
+        self.dead4Position = tuple(data['key_locations']['dead4'])
+        
+        self.normal1Position = tuple(data['key_locations']['normal1'])
+        self.normal2Position = tuple(data['key_locations']['normal2'])
+            
+    def drawStaticObstacles(self):
         for obstacle in self.obstacles:
             beginShape()
             for x, y in obstacle:
                 vertex(x, y)
             endShape(CLOSE)
     
-    def drawKeys(self):
+    def drawStaticKeys(self):
         # playerImg = loadShape('images/player.svg')
         # playerImg.scale(0.07)
         # shape(playerImg, self.playerPosition[0], self.playerPosition[1])
@@ -68,30 +89,7 @@ class Map:
         normal2Img.scale(0.1)
         shape(normal2Img, self.normal2Position[0], self.normal2Position[1])
         
-    def loadData(self):    
-        with open('map.json', 'r') as json_file:
-            data = json.load(json_file)  
-       
-        # self.playerPosition = tuple(data['player_start'])
-        # self.guard1Position = tuple(data['guard1'])
-        # self.guard2Position = tuple(data['guard2'])
-        
-        self.obstacles = data['obstacles'].values()
-        
-        #key locations
-        self.safehousePosition = tuple(data['key_locations']['safe_house'])
-        self.treasurePosition = tuple(data['key_locations']['treasure'])
-        self.dead1Position = tuple(data['key_locations']['dead1'])
-        self.dead2Position = tuple(data['key_locations']['dead2'])
-        self.dead3Position = tuple(data['key_locations']['dead3'])
-        self.dead4Position = tuple(data['key_locations']['dead4'])
-        
-        self.normal1Position = tuple(data['key_locations']['normal1'])
-        self.normal2Position = tuple(data['key_locations']['normal2'])
-        
-    #driver module
     def drawMap(self):
-        self.loadData()
-        self.drawObstacles()
-        self.drawKeys()
-        
+        self.drawStaticObstacles()
+        self.drawStaticKeys()
+   
