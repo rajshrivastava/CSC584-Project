@@ -63,11 +63,12 @@ def keyPressed():
     global player_object
     if keyPressed and key == CODED:
         new_location = player_object.current_location
+        x=player_object.speed
         if keyCode == UP:
-            player_object.update_current_location([new_location[0], new_location[1]-1])
+            player_object.update_current_location([new_location[0], new_location[1]-x])
         elif keyCode == DOWN:
-            player_object.update_current_location([new_location[0], new_location[1]+1])
+            player_object.update_current_location([new_location[0], new_location[1]+x])
         elif keyCode == LEFT:
-            player_object.update_current_location([new_location[0]-1, new_location[1]])
+            player_object.update_current_location([new_location[0]-x, new_location[1]])
         elif keyCode == RIGHT:
-            player_object.update_current_location([new_location[0]+1, new_location[1]])
+            player_object.update_current_location([new_location[0]+x, new_location[1]])
