@@ -72,8 +72,8 @@ class pathFinder():
         return: map of all points to defaultValue
         """
         map_with_default_values = {}
-        for i in range(0,640):
-            for j in range(0,480):
+        for i in range(0,641):
+            for j in range(0,481):
                 map_with_default_values[(i, j)] = defaultValue
         return map_with_default_values
     

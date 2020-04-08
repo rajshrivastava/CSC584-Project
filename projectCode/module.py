@@ -128,7 +128,8 @@ class Bot():
         self.speed = 2
         self.img = loadShape('images/guard1.svg')
         self.img.scale(0.07)
-        
+        self.current_state = None
+        self.last_state_update_time = 0
         
     def update_location(self, new_location):
         """
@@ -173,11 +174,9 @@ class BotMovement():
         """
         self.bots = bot_objects
         self.bot_count = count
-        self.current_state = None
         self.available_state = {
             'wander': {
                 'probability': 0,
-                'last_time': None
             }, 
             'guard': {
                 'probability': 0,
@@ -186,6 +185,7 @@ class BotMovement():
                 'probability': 0,
             }
         }
+        print(width, height)
         self.pathFinderObject = pathFinder(width, height)
         self.treasureStolen = False
     
@@ -204,7 +204,7 @@ class BotMovement():
         bot_object.path_index = 0
         bot_object.max_path_index = len(path)
         bot_object.is_moving = True
-    
+
     def update_probabilities(self):
         """
         Update moving actions' probability based on current state of the game
@@ -214,19 +214,17 @@ class BotMovement():
             self.available_state['guard']['probability'] = 0
             self.available_state['chase']['probability'] = 1
         else:
-            self.available_state['wander']['probability'] = 0.0075
-            self.available_state['guard']['probability'] = 0.9925
+            self.available_state['wander']['probability'] = 0.10
+            self.available_state['guard']['probability'] = 0.90
             self.available_state['chase']['probability'] = 0
         return
-        
-    def decide_bot_state(self):
+
+    def decide_bot_state(self, bot, delay):
         """
-        Function runs a decision making algorithm to find the current state of the bot
+        Function runs a decision making algorithm to find the current state of the given bot
+        if difference between current time and last_state_update_time is greater than given delay
         """
-        self.update_probabilities()
-        if self.current_state=='chase':
-            return
-        if self.current_state=='wander' and time.time()-self.available_state['wander']['last_time'] < 5 :
+        if time.time()-bot.last_state_update_time < delay:
             return
         prand = random.random()
         pdiff = float('inf')
@@ -234,40 +232,63 @@ class BotMovement():
         sum = 0
         for state in self.available_state.keys():
             sum += self.available_state[state]['probability']
-            if prand<= sum:
+            if prand <= sum:
                 closest_state = state
                 break
-        self.current_state = closest_state
-        if self.current_state == 'wander':
-            self.available_state['wander']['last_time'] = time.time()
-            print "wander time reset"
+        bot.current_state = closest_state
+        bot.last_state_update_time = time.time()
         return
-        
+
     def move_bots(self):
         """
-        Function that moves all the bots acroos
-        the canvas
+        Function that moves all the bots across the canvas
         """
-        self.decide_bot_state()
-        if self.current_state == 'wander':
-            for i in range(self.bot_count):
-                if self.bots[i].is_moving:
-                    self.bots[i].move_bot()
-                    self.bots[i].draw_bot()
+        self.update_probabilities()
+        for i, bot in enumerate(self.bots):
+            self.decide_bot_state(bot, 5) # random.randrange(3,5)
+            if bot.current_state == 'wander':
+                if bot.is_moving:
+                    bot.move_bot()
+                    bot.draw_bot()
                 else:
-                    self.bots[i].destination = [random.randrange(0,640), random.randrange(0, 480)]
-                    # print self.bots[i].destination
-                    self.find_bot_path(self.bots[i])
-        elif self.current_state == 'guard':
-            """
-            to make all the bots guard the treasure
-            """
-            print("guard state")
-            pass
-        elif self.current_state == 'chase':
-            """
-            to make all the bots chase the player bot
-            once in the vicinity/range
-            """
-            print("chase state")
-            pass
+                    print("wander state")
+                    bot.destination = [random.randrange(0,640), random.randrange(0, 480)]
+                    # print bot.destination
+                    self.find_bot_path(bot)
+            elif bot.current_state == 'guard':
+                """
+                to make all the bots guard the treasure
+                """
+                if bot.is_moving:
+                    bot.move_bot()
+                    bot.draw_bot()
+                else:
+                    print("guard state")
+                    # treasure_corners = [[100,100], [200,200]]
+                    # bot.destination = random.choice(treasure_corners)
+                    print("curr ", bot.current_location)
+                    treasure_corners = [[640-150, 480], [640-150, 480-150], [640, 480-150], [640, 480]]
+                    if(i%2):
+                        treasure_corners.reverse()
+                    # find nearest corner
+                    x=bot.current_location[0]
+                    y=bot.current_location[1]
+                    nearest_corner = None
+                    dist_min=float('inf')
+                    for corner in treasure_corners:
+                        eu_dist=(corner[0]-x)*(corner[0]-x)+(corner[1]-y)*(corner[1]-y)
+                        if(eu_dist < dist_min):
+                            dist_min = eu_dist
+                            nearest_corner = corner
+                    bot.destination = treasure_corners[(treasure_corners.index(nearest_corner)+1)%4]
+                    print bot.destination
+                    self.find_bot_path(bot)
+                
+                pass
+            elif bot.current_state == 'chase':
+                """
+                to make all the bots chase the player bot
+                once in the vicinity/range
+                """
+                print("chase state")
+                pass
