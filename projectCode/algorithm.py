@@ -13,7 +13,11 @@ class pathFinder():
         self.maxWidth = given_width
         self.maxHeight = given_height
         self.neighbors = [(1,0),(0,1),(-1,0),(0,-1),(1,1),(-1,-1),(-1,1),(1,-1)]
-    
+        self.rBFS_destination = None
+        self.rBFS_gScore = None
+        self.rBFS_fScore = None
+        self.rBFS_path = None
+
     def checkValid(self, fromNode, new_x, new_y):
         """
         Checks if the location is accessible or not
@@ -110,12 +114,43 @@ class pathFinder():
                         openSet.add(connection)
         return False
 
-    def rBFS_utility(self, current, goal, fLimit, parent):
-        if current == goal:
+    def rBFS_utility(self, current, fLimit, parent):
+        if current == self.rBFS_destination:
             return current, fLimit
         successors = self.getConnections(current)
         if not successors:
             return None, float('inf')
+        successorSet = []
+        for successor in successors:
+            self.rBFS_gScore[successor] = self.rBFS_gScore[current] + 1
+            self.rBFS_fScore[successor] = max(self.rBFS_gScore[successor] + self.heuristic(successor, self.rBFS_destination), self.rBFS_fScore[current])
+            heappush(successorSet, (self.rBFS_fScore[successor], successor))
+        while True:
+            best = heappop(successorSet)
+            bestFlimit = best[0]
+            if bestFlimit > fLimit:
+                self.rBFS_path.pop()
+                return None, bestFlimit
+            if len(successorSet) != 0:
+                alternative = heappop(successorSet)
+                heappush(successorSet, alternative)
+                self.rBFS_path.append(best[1])
+                result, bestFlimit = self.rBFS_utility(best[1], min(fLimit, alternative[0]), current)
+                heappush(successorSet, (bestFlimit, best[1]))
+                if result != None:
+                    return result, bestFlimit
+            else:
+                self.rBFS_path.append(best[1])
+                result, bestFlimit = self.rBFS(best[1], fLimit, current)
+                heappush(successorSet, (bestFlimit, best[1]))
+                if result != None:
+                    return result, bestFlimit
 
     def pathFindRecursiveBestFirstSearch(self, start, goal):
-        self.rBFS_utility(start, oal, float('inf'), None)
+        self.rBFS_path = list()
+        self.rBFS_destination = goal
+        self.rBFS_gScore = self.getGraphMapEmpty(0)
+        self.rBFS_fScore = self.getGraphMapEmpty(0)
+        self.rBFS_fScore[start] = self.heuristic(start, goal)
+        self.rBFS_utility(start, float('inf'), None)
+        return self.rBFS_path

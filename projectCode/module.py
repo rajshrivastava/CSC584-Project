@@ -172,7 +172,7 @@ class BotMovement():
         """
         start_location = tuple(bot_object.current_location)
         goal_location = tuple(bot_object.destination)
-        path = self.pathFinderObject.pathFindAstar(start_location, goal_location)
+        path = self.pathFinderObject.pathFindRecursiveBestFirstSearch(start_location, goal_location)
         if not path:
             print("inaccessible")
             return
