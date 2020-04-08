@@ -6,6 +6,7 @@ world_object = None
 player_object = None
 bot_objects = None
 botMovement_object = None
+map_obj = None
 
 def readJson(filename):
     """
@@ -37,18 +38,21 @@ def setup():
     global player_object
     global bot_objects
     global botMovement_object
+    global map_obj
     size(640, 480)
     fileData = readJson('map.json')
     worldJson = loadJson(fileData)
-    world_object = World(worldJson)
+    #world_object = World(worldJson)
     player_object = Player(worldJson["player_start"])
     bot_count = len(worldJson["bot_start"])
     bot_objects = list()
     for i in range(bot_count):
         bot_objects.append(Bot(worldJson["bot_start"][i]))
     botMovement_object = BotMovement(bot_objects, bot_count)
-    world_object.set_background_color()
-    world_object.draw_all_obstacles()
+    #world_object.set_background_color()
+    #world_object.draw_all_obstacles()
+    map_obj = Map()
+    map_obj.drawMap()
 
 def draw():
     """
