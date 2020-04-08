@@ -1,4 +1,5 @@
 import random
+import time
 from algorithm import *
 
 class World():
@@ -172,9 +173,21 @@ class BotMovement():
         """
         self.bots = bot_objects
         self.bot_count = count
-        self.current_state = 'random'
-        self.available_state = ['random', 'guard', 'chase']
+        self.current_state = None
+        self.available_state = {
+            'wander': {
+                'probability': 0,
+                'last_time': None
+            }, 
+            'guard': {
+                'probability': 0,
+            }, 
+            'chase': {
+                'probability': 0,
+            }
+        }
         self.pathFinderObject = pathFinder(width, height)
+        self.treasureStolen = False
     
     def find_bot_path(self, bot_object):
         """
@@ -191,13 +204,52 @@ class BotMovement():
         bot_object.path_index = 0
         bot_object.max_path_index = len(path)
         bot_object.is_moving = True
-            
+    
+    def update_probabilities(self):
+        """
+        Update moving actions' probability based on current state of the game
+        """
+        if self.treasureStolen:
+            self.available_state['wander']['probability'] = 0
+            self.available_state['guard']['probability'] = 0
+            self.available_state['chase']['probability'] = 1
+        else:
+            self.available_state['wander']['probability'] = 0.0075
+            self.available_state['guard']['probability'] = 0.9925
+            self.available_state['chase']['probability'] = 0
+        return
+        
+    def decide_bot_state(self):
+        """
+        Function runs a decision making algorithm to find the current state of the bot
+        """
+        self.update_probabilities()
+        if self.current_state=='chase':
+            return
+        if self.current_state=='wander' and time.time()-self.available_state['wander']['last_time'] < 5 :
+            return
+        prand = random.random()
+        pdiff = float('inf')
+        closest_state = None
+        sum = 0
+        for state in self.available_state.keys():
+            sum += self.available_state[state]['probability']
+            if prand<= sum:
+                closest_state = state
+                break
+        self.current_state = closest_state
+        if self.current_state == 'wander':
+            self.available_state['wander']['last_time'] = time.time()
+            print "wander time reset"
+        return
+        
     def move_bots(self):
         """
         Function that moves all the bots acroos
         the canvas
         """
-        if self.current_state == 'random':
+        self.decide_bot_state()
+        if self.current_state == 'wander':
             for i in range(self.bot_count):
                 if self.bots[i].is_moving:
                     self.bots[i].move_bot()
@@ -210,10 +262,12 @@ class BotMovement():
             """
             to make all the bots guard the treasure
             """
+            print("guard state")
             pass
         elif self.current_state == 'chase':
             """
             to make all the bots chase the player bot
             once in the vicinity/range
             """
+            print("chase state")
             pass
