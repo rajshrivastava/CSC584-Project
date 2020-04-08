@@ -121,8 +121,7 @@ class Bot():
         self.destination = None
         self.speed = 2
         
-
-    def update_location(self, new_location):
+    def update_location(self, new_location)
         """
         Function that updates the new_location and also
         stores the previous one for reference for all
