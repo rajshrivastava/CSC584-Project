@@ -15,7 +15,7 @@ class Map:
         self.normal1Position = None
         self.normal2Position = None
         self.fire_i = 0
-        
+        self.loadData()
         
     def loadImages(self): #called in loadData()
         self.fireImages = [loadImage('images/fire/fire0.gif'), loadImage('images/fire/fire1.gif'), loadImage('images/fire/fire2.gif'),loadImage('images/fire/fire3.gif')]
@@ -80,7 +80,6 @@ class Map:
         image(fire, self.dead4Position[0], self.dead4Position[1], fire.height/4, fire.width/4)
         
     def drawMap(self):
-        self.loadData()
         self.drawStaticObstacles()
         self.drawStaticKeys()
         self.drawDynamicObstacles()
