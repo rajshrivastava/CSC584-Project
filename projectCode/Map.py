@@ -1,6 +1,7 @@
 import json
 class Map:
-    def __init__(self):
+    def __init__(self, jsonData):
+        self.data = jsonData
         self.playerPosition = None
         self.guard1Position = None
         self.guard2Position = None
@@ -17,25 +18,22 @@ class Map:
         self.loadData()
         
     def loadData(self):    
-        with open('map.json', 'r') as json_file:
-            data = json.load(json_file)  
-       
-        # self.playerPosition = tuple(data['player_start'])
-        # self.guard1Position = tuple(data['guard1'])
-        # self.guard2Position = tuple(data['guard2'])
+        # self.playerPosition = tuple(self.data['player_start'])
+        # self.guard1Position = tuple(self.data['guard1'])
+        # self.guard2Position = tuple(self.data['guard2'])
         
-        self.obstacles = data['obstacles'].values()
+        self.obstacles = self.data['obstacles'].values()
         
         #key locations
-        self.safehousePosition = tuple(data['key_locations']['safe_house'])
-        self.treasurePosition = tuple(data['key_locations']['treasure'])
-        self.dead1Position = tuple(data['key_locations']['dead1'])
-        self.dead2Position = tuple(data['key_locations']['dead2'])
-        self.dead3Position = tuple(data['key_locations']['dead3'])
-        self.dead4Position = tuple(data['key_locations']['dead4'])
+        self.safehousePosition = tuple(self.data['key_locations']['safe_house'])
+        self.treasurePosition = tuple(self.data['key_locations']['treasure'])
+        self.dead1Position = tuple(self.data['key_locations']['dead1'])
+        self.dead2Position = tuple(self.data['key_locations']['dead2'])
+        self.dead3Position = tuple(self.data['key_locations']['dead3'])
+        self.dead4Position = tuple(self.data['key_locations']['dead4'])
         
-        self.normal1Position = tuple(data['key_locations']['normal1'])
-        self.normal2Position = tuple(data['key_locations']['normal2'])
+        self.normal1Position = tuple(self.data['key_locations']['normal1'])
+        self.normal2Position = tuple(self.data['key_locations']['normal2'])
             
     def drawStaticObstacles(self):
         for obstacle in self.obstacles:
@@ -90,6 +88,6 @@ class Map:
         shape(normal2Img, self.normal2Position[0], self.normal2Position[1])
         
     def drawMap(self):
-        self.drawStaticObstacles()
+        # self.drawStaticObstacles()
         self.drawStaticKeys()
    

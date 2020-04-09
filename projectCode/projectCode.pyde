@@ -40,7 +40,7 @@ def setup():
     global bot_objects
     global botMovement_object
     global map_obj
-    size(640, 480)
+    size(641, 481)
     
     fileData = readJson('map.json')
     worldJson = loadJson(fileData)
@@ -53,7 +53,7 @@ def setup():
     botMovement_object = BotMovement(bot_objects, bot_count)
     # world_object.set_background_color()
     #world_object.draw_all_obstacles()
-    map_obj = Map()
+    map_obj = Map(worldJson)
     
 
 def draw():

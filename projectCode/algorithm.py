@@ -78,8 +78,8 @@ class pathFinder():
         return map_with_default_values
     
     def initMaxQueueSizeRBFS(self):
-        for i in range(0,640):
-            for j in range(0,480):
+        for i in range(0,641):
+            for j in range(0,481):
                 self.maxQueueSizeRBFS[(i,j)] = 0
                 
     def getMaxQueueSizeRBFS(self):
@@ -121,8 +121,8 @@ class pathFinder():
                 path.append(start)
                 path.reverse()
                 # print("Total cities expanded in A* algorithm: " + str(self.totalCitiesExpandedAStar()))
-                if self.enable_logging:
-                    print("cummulative max queue size in A* algorithm: " + str(self.maxQueueSizeAStar))
+                # if self.enable_logging:
+                #     print("cummulative max queue size in A* algorithm: " + str(self.maxQueueSizeAStar))
                 return path
             connections = self.getConnections(current)
             for connection in connections:
