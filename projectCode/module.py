@@ -105,7 +105,7 @@ class Player():
         circle(self.current_location[0], self.current_location[1], 10)
         
     def draw_player(self):
-        shape(self.img, self.current_location[0], self.current_location[1])
+        shape(self.img, self.current_location[0]-25, self.current_location[1]-25)
 
 class Bot():
     """
@@ -161,7 +161,7 @@ class Bot():
         circle(self.current_location[0], self.current_location[1], 10)
     
     def draw_bot(self):
-        shape(self.img, self.current_location[0], self.current_location[1])
+        shape(self.img, self.current_location[0]-25, self.current_location[1]-25)
         
 class BotMovement():
     """
@@ -266,7 +266,7 @@ class BotMovement():
                     print("guard state")
                     # treasure_corners = [[100,100], [200,200]]
                     # bot.destination = random.choice(treasure_corners)
-                    print("curr ", bot.current_location)
+                    # print("curr ", bot.current_location)
                     treasure_corners = [[640-150, 480], [640-150, 480-150], [640, 480-150], [640, 480]]
                     if(i%2):
                         treasure_corners.reverse()
@@ -281,7 +281,7 @@ class BotMovement():
                             dist_min = eu_dist
                             nearest_corner = corner
                     bot.destination = treasure_corners[(treasure_corners.index(nearest_corner)+1)%4]
-                    print bot.destination
+                    # print bot.destination
                     self.find_bot_path(bot)
                 
                 pass
