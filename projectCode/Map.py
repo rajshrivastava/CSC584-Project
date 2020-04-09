@@ -14,7 +14,23 @@ class Map:
         self.dead4Position = None
         self.normal1Position = None
         self.normal2Position = None
-        self.loadData()
+        self.fire_i = 0
+        
+        
+    def loadImages(self): #called in loadData()
+        self.fireImages = [loadImage('images/fire/fire0.gif'), loadImage('images/fire/fire1.gif'), loadImage('images/fire/fire2.gif'),loadImage('images/fire/fire3.gif')]
+        for i in range(len(self.fireImages)):
+            self.fireImages[i].resize(180, 120) 
+            
+        self.normal1 = loadImage('images/corona.png')
+        self.normal1.resize(30,30)
+        self.normal2 = loadImage('images/corona.png')
+        self.normal2.resize(30,30)
+        self.safehouseImg = loadImage('images/safehouse.png')
+        self.safehouseImg.resize(100,100)
+        
+        self.treasureImg = loadImage('images/treasure.png')
+        self.treasureImg.resize(100,100)
         
     def loadData(self):    
         with open('map.json', 'r') as json_file:
@@ -36,6 +52,9 @@ class Map:
         
         self.normal1Position = tuple(data['key_locations']['normal1'])
         self.normal2Position = tuple(data['key_locations']['normal2'])
+        
+        self.loadImages()
+        
             
     def drawStaticObstacles(self):
         for obstacle in self.obstacles:
@@ -44,52 +63,26 @@ class Map:
                 vertex(x, y)
             endShape(CLOSE)
     
-    def drawStaticKeys(self):
-        # playerImg = loadShape('images/player.svg')
-        # playerImg.scale(0.07)
-        # shape(playerImg, self.playerPosition[0], self.playerPosition[1])
+    def drawStaticKeys(self):    
+        image(self.safehouseImg, self.safehousePosition[0], self.safehousePosition[1], self.safehouseImg.height/2, self.safehouseImg.width/2)    
+        image(self.treasureImg, self.treasurePosition[0], self.treasurePosition[1], self.treasureImg.height/2, self.treasureImg.width/2)
+        
+        image(self.normal1, self.normal1Position[0], self.normal1Position[1])
+        image(self.normal2, self.normal2Position[0], self.normal2Position[1])
+        pass
     
-        # guard1Img = loadShape('images/guard1.svg')
-        # guard1Img.scale(0.07)
-        # shape(guard1Img, self.guard1Position[0], self.guard1Position[1])
-    
-        # guard2Img = loadShape('images/guard2.svg')
-        # guard2Img.scale(0.06)
-        # shape(guard1Img, self.guard2Position[0], self.guard2Position[1])
-    
-        safehouseImg = loadShape('images/safehouse.svg')
-        safehouseImg.scale(0.1)
-        shape(safehouseImg, self.safehousePosition[0], self.safehousePosition[1])
-    
-        treasureImg = loadShape('images/treasure.svg')
-        treasureImg.scale(0.1)
-        shape(treasureImg, self.treasurePosition[0], self.treasurePosition[1])
-        
-        dead1Img = loadShape('images/dead1.svg')
-        dead1Img.scale(0.5)
-        shape(dead1Img, self.dead1Position[0], self.dead1Position[1])
-        
-        dead2Img = loadShape('images/dead2.svg')
-        dead2Img.scale(0.5)
-        shape(dead2Img, self.dead2Position[0], self.dead2Position[1])
-        
-        dead3Img = loadShape('images/dead3.svg')
-        dead3Img.scale(0.5)
-        shape(dead3Img, self.dead3Position[0], self.dead3Position[1])
-        
-        dead4Img = loadShape('images/dead4.svg')
-        dead4Img.scale(0.5)
-        shape(dead1Img, self.dead4Position[0], self.dead4Position[1])
-        
-        normal1Img = loadShape('images/normal1.svg')
-        normal1Img.scale(0.1)
-        shape(normal1Img, self.normal1Position[0], self.normal1Position[1])
-        
-        normal2Img = loadShape('images/normal2.svg')
-        normal2Img.scale(0.1)
-        shape(normal2Img, self.normal2Position[0], self.normal2Position[1])
+    def drawDynamicObstacles(self):
+        self.fire_i = (self.fire_i + 1)%40
+        fire = self.fireImages[self.fire_i//10]
+        image(fire, self.dead1Position[0], self.dead1Position[1], fire.height/4, fire.width/4)
+        image(fire, self.dead2Position[0], self.dead2Position[1], fire.height/4, fire.width/4)
+        image(fire, self.dead3Position[0], self.dead3Position[1], fire.height/4, fire.width/4)
+        image(fire, self.dead4Position[0], self.dead4Position[1], fire.height/4, fire.width/4)
         
     def drawMap(self):
+        self.loadData()
         self.drawStaticObstacles()
         self.drawStaticKeys()
-   
+        self.drawDynamicObstacles()
+    
+        
