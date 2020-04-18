@@ -32,8 +32,8 @@ class pathFinder():
             return False
         elif new_y < 0 or new_y > self.maxHeight:
             return False
-        # elif get(new_x, new_y) != -1:
-        #     return False
+        elif get(new_x, new_y) != -1:
+            return False
         else:
             return True
     
@@ -192,9 +192,11 @@ class pathFinder():
             self.rBFS_utility(start, float('inf'), None)
         except Exception as e:
             if self.enable_logging:
-                print("cummulative max queue size in RBFS algorithm: " + str(self.getMaxQueueSizeRBFS()))
-            print "maximum recursion depth exceeded"
+                #print("cummulative max queue size in RBFS algorithm: " + str(self.getMaxQueueSizeRBFS()))
+                pass
+            #print "maximum recursion depth exceeded"
             return False
         if self.enable_logging:
-            print("cummulative max queue size in RBFS algorithm: " + str(self.getMaxQueueSizeRBFS()))        
+            #print("cummulative max queue size in RBFS algorithm: " + str(self.getMaxQueueSizeRBFS()))    
+            pass    
         return self.rBFS_path
