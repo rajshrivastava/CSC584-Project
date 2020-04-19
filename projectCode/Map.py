@@ -80,7 +80,7 @@ class Map:
         image(fire, self.dead4Position[0]-20, self.dead4Position[1]-20, fire.height/4, fire.width/4)
         
     def drawMap(self):
-        # self.drawStaticObstacles()
+        self.drawStaticObstacles()
         self.drawStaticKeys()
         self.drawDynamicObstacles()
     
