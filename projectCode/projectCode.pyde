@@ -8,6 +8,8 @@ player_object = None
 bot_objects = None
 botMovement_object = None
 map_obj = None
+oneTimeChangeOnTreasureStolen = True
+game_over = False
 
 def readJson(filename):
     """
@@ -40,7 +42,7 @@ def setup():
     global bot_objects
     global botMovement_object
     global map_obj
-    size(640, 480)
+    size(641, 481)
     
     fileData = readJson('map.json')
     worldJson = loadJson(fileData)
@@ -53,7 +55,7 @@ def setup():
     botMovement_object = BotMovement(bot_objects, bot_count)
     # world_object.set_background_color()
     #world_object.draw_all_obstacles()
-    map_obj = Map()
+    map_obj = Map(worldJson)
     
 
 def draw():
@@ -62,11 +64,44 @@ def draw():
     """
     fill(0)
     background(255, 255, 255)
-    map_obj.drawMap()   
     global player_object
     global botMovement_object
+    global map_obj
+    global oneTimeChangeOnTreasureStolen
+    global game_over
+    
+    map_obj.drawMap()
+    
+    if(game_over):
+        return
+    
     player_object.draw_player()
-    botMovement_object.move_bots()
+    
+    # check if treasure stolen
+    if(map_obj.checkTreasureStolen(player_object.current_location)):
+        
+        if(oneTimeChangeOnTreasureStolen):
+            # do all the one time changes like changing speeds, power-ups etc.
+            print("TREASURE STOLEN!")
+            botMovement_object.treasureStolen = True
+            player_object.img = loadShape('images/player_steal.svg')
+            player_object.img.scale(0.07)
+            oneTimeChangeOnTreasureStolen = False
+        
+        # do all the things when the game is in treasure stolen state
+        # like powerups, decision-making etc.
+        pass
+    
+    # check collision between player and obstacles
+    if(map_obj.playerCollisionOccur(player_object.current_location, botMovement_object.bots)):
+        print("PLAYER COLLIDED. GAME OVER!")
+        # show something on screen as well
+        game_over=True
+        return
+    
+    # botMovement_object.move_bots(player_object.current_location)
+    botMovement_object.move_bots(player_object.current_location, map_obj.treasurePosition, map_obj.safehousePosition)
+
     
     
 def keyPressed():
