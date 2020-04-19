@@ -80,7 +80,7 @@ class Player():
         self.last_location = None
         self.current_location = start_location
         self.speed = 2
-        self.img = loadShape('images/player.svg')
+        self.img = loadShape('images/treasure.svg')
         self.img.scale(0.07)
     
     def update_current_location(self, new_location):
