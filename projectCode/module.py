@@ -198,7 +198,7 @@ class BotMovement():
         #path = self.pathFinderObject.pathFindRecursiveBestFirstSearch(start_location, goal_location)
         path = self.pathFinderObject.pathFindAstar(start_location, goal_location)
         if not path:
-            print("inaccessible")
+            # print("inaccessible")
             return
         bot_object.path_traversing = path
         bot_object.path_index = 0
@@ -238,8 +238,31 @@ class BotMovement():
         bot.current_state = closest_state
         bot.last_state_update_time = time.time()
         return
-
-    def move_bots(self):
+    
+    def guardObjectNextLocation(self, current_location, obj_center, w, l, reverse=False):
+        obj_corners = [[obj_center[0]+w//2, obj_center[1]-l//2], [obj_center[0]+w//2, obj_center[1]+l//2], [obj_center[0]-w//2, obj_center[1]+l//2], [obj_center[0]-w//2, obj_center[1]-l//2]]
+        
+        if(reverse):
+            obj_corners.reverse()
+            
+        # find nearest corner
+        x=current_location[0]
+        y=current_location[1]
+        nearest_corner_idx = None
+        dist_min=float('inf')
+        for i, corner in enumerate(obj_corners):
+            eu_dist=(corner[0]-x)*(corner[0]-x)+(corner[1]-y)*(corner[1]-y)
+            if(eu_dist < dist_min):
+                dist_min = eu_dist
+                nearest_corner_idx = i
+        
+        # if(dist_min <= 20):
+        #     nearest_corner_idx = (nearest_corner_idx+1)%4
+        nearest_corner_idx = (nearest_corner_idx+1)%4
+        
+        return obj_corners[nearest_corner_idx]
+            
+    def move_bots(self, player_loc, treasure_loc=(520, 420), safehouse_loc=(50,50)):
         """
         Function that moves all the bots across the canvas
         """
@@ -251,10 +274,11 @@ class BotMovement():
                     bot.move_bot()
                     bot.draw_bot()
                 else:
-                    print("wander state")
+                    # print("wander state")
                     bot.destination = [random.randrange(0,640), random.randrange(0, 480)]
                     # print bot.destination
                     self.find_bot_path(bot)
+                
             elif bot.current_state == 'guard':
                 """
                 to make all the bots guard the treasure
@@ -263,32 +287,35 @@ class BotMovement():
                     bot.move_bot()
                     bot.draw_bot()
                 else:
-                    print("guard state")
-                    # treasure_corners = [[100,100], [200,200]]
-                    # bot.destination = random.choice(treasure_corners)
-                    # print("curr ", bot.current_location)
-                    treasure_corners = [[640-150, 480], [640-150, 480-150], [640, 480-150], [640, 480]]
+                    # print("guard state")
+                    
+                    width_treasure = 120
+                    length_treasure = 120
+                    treasure_center = treasure_loc
+                    
                     if(i%2):
-                        treasure_corners.reverse()
-                    # find nearest corner
-                    x=bot.current_location[0]
-                    y=bot.current_location[1]
-                    nearest_corner = None
-                    dist_min=float('inf')
-                    for corner in treasure_corners:
-                        eu_dist=(corner[0]-x)*(corner[0]-x)+(corner[1]-y)*(corner[1]-y)
-                        if(eu_dist < dist_min):
-                            dist_min = eu_dist
-                            nearest_corner = corner
-                    bot.destination = treasure_corners[(treasure_corners.index(nearest_corner)+1)%4]
-                    # print bot.destination
+                        bot.destination = self.guardObjectNextLocation(bot.current_location, treasure_center, width_treasure, length_treasure, True)
+                    else:
+                        bot.destination = self.guardObjectNextLocation(bot.current_location, treasure_center, width_treasure, length_treasure)
+                    
+                    # print (bot.destination)
                     self.find_bot_path(bot)
                 
-                pass
             elif bot.current_state == 'chase':
                 """
                 to make all the bots chase the player bot
                 once in the vicinity/range
                 """
-                print("chase state")
-                pass
+                # print("chase state")
+                if bot.is_moving:
+                    bot.move_bot()
+                    bot.draw_bot()
+                else:
+                    """
+                    currently going at mid point of player and safehouse location
+                    use decision making to change destination
+                    """
+                    safehouse_center = safehouse_loc
+                    bot.destination = ((player_loc[0]+safehouse_center[0])//2, (player_loc[1]+safehouse_center[1])//2)
+                    self.find_bot_path(bot)
+                
