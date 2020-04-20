@@ -97,7 +97,7 @@ class pathFinder():
             return abs(point1[0] - point2[0]) +  abs(point1[1] - point2[1]) #manhattan
                 
         if not self.checkValid(None, goal[0], goal[1]):
-            return False    
+            return [start]    
         map_g = {start: 0}
         map_h = {start: 0}
         map_f = {start: 0}
