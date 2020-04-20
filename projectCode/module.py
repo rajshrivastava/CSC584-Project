@@ -105,7 +105,9 @@ class Player():
         circle(self.current_location[0], self.current_location[1], 10)
         
     def draw_player(self):
-        shape(self.img, self.current_location[0]-25, self.current_location[1]-25)
+        # shape(self.img, self.current_location[0]-25, self.current_location[1]-25)
+        shape(self.img, self.current_location[0], self.current_location[1])
+
 
 class Bot():
     """
@@ -174,6 +176,8 @@ class BotMovement():
         """
         self.bots = bot_objects
         self.bot_count = count
+        self.bot_actions_decisions = None
+        self.bot_actions_locations = None
         self.available_state = {
             'wander': {
                 'probability': 0,
@@ -318,4 +322,44 @@ class BotMovement():
                     safehouse_center = safehouse_loc
                     bot.destination = ((player_loc[0]+safehouse_center[0])//2, (player_loc[1]+safehouse_center[1])//2)
                     self.find_bot_path(bot)
-                
+    
+    def move_bots_decisions(self, player_loc, treasure_loc=(520, 420), safehouse_loc=(50,50)):
+        for i in range(self.bot_count):
+            bot = self.bots[i]
+            print self.bot_actions_decisions[i]
+            if self.bot_actions_decisions[i] == "wander":
+                if bot.is_moving:
+                    bot.move_bot()
+                    bot.draw_bot()
+                else:
+                    # print("wander state")
+                    bot.destination = [random.randrange(0,640), random.randrange(0, 480)]
+                    # print bot.destination
+                    self.find_bot_path(bot)
+            elif self.bot_actions_decisions[i] == "guard":
+                if bot.is_moving:
+                    bot.move_bot()
+                    bot.draw_bot()
+                else:
+                    # print("guard state")
+                    
+                    width_treasure = 120
+                    length_treasure = 120
+                    treasure_center = treasure_loc
+                    guard_stripe_loc = self.bot_actions_locations[i]
+                    
+                    if(i%2):
+                        bot.destination = self.guardObjectNextLocation(bot.current_location, guard_stripe_loc, width_treasure, length_treasure, True)
+                    else:
+                        bot.destination = self.guardObjectNextLocation(bot.current_location, guard_stripe_loc, width_treasure, length_treasure)
+                    # print (bot.destination)
+                    self.find_bot_path(bot)
+            elif self.bot_actions_decisions[i] == "chase":
+                if bot.is_moving:
+                    bot.move_bot()
+                    bot.draw_bot()
+                else:
+                    # print("wander state")
+                    bot.destination = player_loc
+                    # print bot.destination
+                    self.find_bot_path(bot)
