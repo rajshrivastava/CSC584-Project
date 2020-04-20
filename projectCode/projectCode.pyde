@@ -2,6 +2,7 @@ import json
 from module import *
 from algorithm import *
 from Map import *
+from decision_making import *
 
 world_object = None
 player_object = None
@@ -10,6 +11,7 @@ botMovement_object = None
 map_obj = None
 oneTimeChangeOnTreasureStolen = True
 game_over = False
+decision_obj = None
 
 def readJson(filename):
     """
@@ -42,6 +44,8 @@ def setup():
     global bot_objects
     global botMovement_object
     global map_obj
+    global decision_obj
+    
     size(641, 481)
     
     fileData = readJson('map.json')
@@ -57,6 +61,9 @@ def setup():
     #world_object.draw_all_obstacles()
     map_obj = Map(worldJson)
     
+    fileData = readJson('action.json')
+    actionJson = loadJson(fileData)
+    decision_obj = decisions(map_obj, botMovement_object, player_object, actionJson)
 
 def draw():
     """
@@ -71,6 +78,7 @@ def draw():
     global map_obj
     global oneTimeChangeOnTreasureStolen
     global game_over
+    global decision_obj
     
     map_obj.drawMap()
     
@@ -86,6 +94,7 @@ def draw():
             # do all the one time changes like changing speeds, power-ups etc.
             print("TREASURE STOLEN!")
             botMovement_object.treasureStolen = True
+            decision_obj.treasure_intact = False
             player_object.img = loadShape('images/player_steal.svg')
             player_object.img.scale(0.07)
             oneTimeChangeOnTreasureStolen = False
@@ -102,15 +111,16 @@ def draw():
         return
     
     # botMovement_object.move_bots(player_object.current_location)
-    botMovement_object.move_bots(player_object.current_location, map_obj.treasurePosition, map_obj.safehousePosition)
-
-    
+    #botMovement_object.move_bots(player_object.current_location, map_obj.treasurePosition, map_obj.safehousePosition)
+    # bot movementt added to decision control class
+    decision_obj.game_control()
     
 def keyPressed():
     global player_object
     if keyPressed and key == CODED:
         new_location = player_object.current_location
-        x=player_object.speed
+        # x=player_object.speed
+        x = 7
         if keyCode == UP:
             player_object.update_current_location([new_location[0], new_location[1]-x])
         elif keyCode == DOWN:
