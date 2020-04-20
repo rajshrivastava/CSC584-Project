@@ -35,6 +35,13 @@ class Map:
         self.treasureImg = loadImage('images/treasure.png')
         self.treasureImg.resize(100,100)
         
+        self.player_stealImg = loadShape('images/player_steal.svg')
+        self.player_stealImg.scale(0.07)
+        
+        self.player_powerImg = loadShape('images/player_power.png')
+        
+        self.bot_powerImg = loadShape('images/bot_power.png')
+                
     def loadData(self):    
         # self.playerPosition = tuple(self.data['player_start'])
         # self.guard1Position = tuple(self.data['guard1'])
@@ -53,6 +60,8 @@ class Map:
         self.normal1Position = tuple(self.data['key_locations']['normal1'])
         self.normal2Position = tuple(self.data['key_locations']['normal2'])
         
+        self.player_power_positions = self.data['player_power']
+        self.bot_power_positions = self.data['bot_power']
         self.loadImages()
         
             

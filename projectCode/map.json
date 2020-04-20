@@ -6,6 +6,8 @@
     [200, 300]
   ],
   "player_start": [25, 290],
+  "player_power": [[100,100], [150,190], [340,232],[423,90]],
+  "bot_power": [[10,100], [50,10], [140,432],[123,290]],
   "obstacles": {
 
     "middleVertical": [
@@ -30,7 +32,7 @@
   },
 
   "key_locations": {
-    "safe_house": [50,50],
+    "safe_house": [80,80],
     "treasure": [520, 420],
     "dead1": [92,205],
     "dead2": [565,241],
