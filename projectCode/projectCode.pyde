@@ -3,6 +3,7 @@ from module import *
 from algorithm import *
 from Map import *
 from decision_making import *
+from power_up import *
 
 world_object = None
 player_object = None
@@ -12,7 +13,7 @@ map_obj = None
 oneTimeChangeOnTreasureStolen = True
 game_over = False
 decision_obj = None
-decision_counter = 0
+power_object = None
 
 def readJson(filename):
     """
@@ -65,7 +66,11 @@ def setup():
     fileData = readJson('action.json')
     actionJson = loadJson(fileData)
     decision_obj = decisions(map_obj, botMovement_object, player_object, actionJson)
-
+    
+    #powerUp
+    power_obj = Power(worldJson)
+    
+    
 def draw():
     """
     draw function for the game
@@ -80,7 +85,6 @@ def draw():
     global oneTimeChangeOnTreasureStolen
     global game_over
     global decision_obj
-    global decision_counter
     
     map_obj.drawMap()
     
@@ -114,6 +118,7 @@ def draw():
         #botMovement_object.move_bots(player_object.current_location, map_obj.treasurePosition, map_obj.safehousePosition)
         # bot movementt added to decision control class
         decision_obj.game_control()
+        
     else:     #game over
         gameOverImg = loadImage('images/gameOver.png')
         #gameOverImg.scale(0.07)
