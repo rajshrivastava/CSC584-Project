@@ -113,12 +113,7 @@ def draw():
         # botMovement_object.move_bots(player_object.current_location)
         #botMovement_object.move_bots(player_object.current_location, map_obj.treasurePosition, map_obj.safehousePosition)
         # bot movementt added to decision control class
-        if decision_counter % 20 == 0:
-            print('Bot making decision...')
-            decision_counter = 0
-            decision_obj.game_control()
-        else:
-            decision_counter += 1
+        decision_obj.game_control()
     else:     #game over
         gameOverImg = loadImage('images/gameOver.png')
         #gameOverImg.scale(0.07)

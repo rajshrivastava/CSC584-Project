@@ -326,7 +326,7 @@ class BotMovement():
     def move_bots_decisions(self, player_loc, treasure_loc=(520, 420), safehouse_loc=(50,50)):
         for i in range(self.bot_count):
             bot = self.bots[i]
-            print('bot {} {}'.format(i, self.bot_actions_decisions[i]))
+            # print('bot {} {}'.format(i, self.bot_actions_decisions[i]))
             if self.bot_actions_decisions[i] == "wander":
                 if bot.is_moving:
                     bot.move_bot()

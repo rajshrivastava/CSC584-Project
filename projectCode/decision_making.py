@@ -53,7 +53,7 @@ class decisions():
             temp = heappop(actions_heap)
             # print temp[1].split(" ")[0]
             result_actions.append(temp[1].split(" ")[0])
-        print result_actions
+        return result_actions
 
     def game_control(self):
         self.player_position = self.player_obj.current_location
