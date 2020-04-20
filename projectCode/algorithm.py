@@ -89,6 +89,65 @@ class pathFinder():
         return totalCount
 
     def pathFindAstar(self, start, goal):
+        def heuristic(point1, point2):
+            #euclidean
+            #return (point1[0] - point2[0])*(point1[0] - point2[0]) +  (point1[1] - point2[1])*(point1[1] - point2[1]) #euclidean
+            
+            #manhattan
+            return abs(point1[0] - point2[0]) +  abs(point1[1] - point2[1]) #manhattan
+                
+        if not self.checkValid(None, goal[0], goal[1]):
+            return False    
+        map_g = {start: 0}
+        map_h = {start: 0}
+        map_f = {start: 0}
+        map_parent = {start: None}
+        
+        closedSet = set() #can be removed
+        openSet = {start}
+        openHeap = [(map_f[start], start)]
+        
+        #neighbors = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (1, -1), (-1, 1), (-1, -1)]
+        neighbors = [(0, 1), (0, -1), (1, 0), (-1, 0)]
+        path = []
+        while openHeap:
+            current_position = heappop(openHeap)[1]
+            #openSet.remove(current_position)
+            openSet.discard(current_position)
+            closedSet.add(current_position)
+            
+            if current_position == goal:  # reached target
+                while current_position:
+                    path.append(current_position)
+                    current_position = map_parent[current_position]
+                return path[::-1]
+    
+            for x,y in neighbors:
+                neighbor_position = current_position[0] + x, current_position[1] + y 
+                if neighbor_position in closedSet or not self.checkValid(None, neighbor_position[0], neighbor_position[1]):
+                    continue
+                
+                neighbor_tentative_g = map_g[current_position] + 1    
+                if neighbor_position in openSet:
+                    if neighbor_tentative_g <  map_g[neighbor_position]:
+                        map_parent[neighbor_position] = current_position
+                        map_g[neighbor_position] = neighbor_tentative_g
+                        map_f[neighbor_position] = map_g[neighbor_position] + map_h[neighbor_position]
+                        heapreplace(openHeap, (map_f[neighbor_position], neighbor_position))
+                else:
+                    map_parent[neighbor_position] = current_position
+                    map_g[neighbor_position] = neighbor_tentative_g
+                    map_h[neighbor_position] = heuristic(neighbor_position, goal)
+                    map_f[neighbor_position] = map_g[neighbor_position] + map_h[neighbor_position]
+                    heappush(openHeap, (map_f[neighbor_position], neighbor_position))
+                    openSet.add(neighbor_position)
+                        
+        return path
+    
+
+
+
+    def pathFindAstar_Tanay(self, start, goal):
         """
         Algorithm for finding the paht from start to
         goal location using A-star algorithm

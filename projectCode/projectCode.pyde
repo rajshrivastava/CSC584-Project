@@ -62,7 +62,9 @@ def draw():
     """
     draw function for the game
     """
-    fill(0)
+    r,g,b = 255,150,0
+    fill(r,g,b)
+    stroke(r,g,b)
     background(255, 255, 255)
     global player_object
     global botMovement_object
