@@ -1,0 +1,30 @@
+{
+	"defend_q2": {
+		"random_all" : "10"
+	},
+	"defend_q1": {
+		"guard_1" : "5",
+		"random_1" : "5"
+	},
+	"defend_q3": {
+		"guard_1" : "5",
+		"random_1" : "5"
+	},
+	"defend_q4": {
+		"guard_all" : "10"
+	},
+	"attack_q4": {
+		"chase_1" : "10"
+	},
+	"attack_q3": {
+		"guard_1": "5",
+		"chase_1": "5"
+	},
+	"attack_q1": {
+		"guard_1": "5",
+		"chase_1": "5"
+	},
+	"attack_q2": {
+		"guard_all" : "10"
+	}
+}
