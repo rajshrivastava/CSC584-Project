@@ -12,8 +12,9 @@ botMovement_object = None
 map_obj = None
 oneTimeChangeOnTreasureStolen = True
 game_over = False
+player_win = False
 decision_obj = None
-power_object = None
+power_obj = None
 
 def readJson(filename):
     """
@@ -41,6 +42,7 @@ def setup():
     """
     setup function for the game
     """
+    print('Loading Game...')
     global world_object
     global player_object
     global bot_objects
@@ -71,6 +73,8 @@ def setup():
     actionJson = loadJson(fileData)
     decision_obj = decisions(map_obj, botMovement_object, player_object, actionJson, power_obj)
     
+    print('GO!')
+    
 def draw():
     """
     draw function for the game
@@ -83,6 +87,7 @@ def draw():
     global botMovement_object
     global map_obj
     global oneTimeChangeOnTreasureStolen
+    global player_win
     global game_over
     global decision_obj
     global power_obj
@@ -93,7 +98,7 @@ def draw():
     player_object.draw_player()
     if not game_over:      
         # check if treasure stolen
-        if(map_obj.checkTreasureStolen(player_object.current_location)):
+        if(map_obj.checkTreasureStolen(player_object.player_center())):
             
             if(oneTimeChangeOnTreasureStolen):
                 # do all the one time changes like changing speeds, power-ups etc.
@@ -107,10 +112,20 @@ def draw():
             
             # do all the things when the game is in treasure stolen state
             # like powerups, decision-making etc.
-            pass
+            
+            # check if player reached back home
+            if(map_obj.playerBackHome(player_object.player_center())):
+                print("PLAYER BACK HOME. PLAYER WINS!")
+                # show something on screen as well
+                player_win=True
+                game_over=True
+                return
+    
+        # check collision between player and power and applies power
+        map_obj.playerCollisionWithPower(player_object, power_obj, botMovement_object.bots)
         
         # check collision between player and obstacles
-        if(map_obj.playerCollisionOccur(player_object.current_location, botMovement_object.bots)):
+        if(map_obj.playerCollisionOccur(player_object.player_center(), botMovement_object.bots)):
             print("PLAYER COLLIDED. GAME OVER!")
             # show something on screen as well
             game_over=True
@@ -122,9 +137,14 @@ def draw():
         decision_obj.game_control()
         
     else:     #game over
-        gameOverImg = loadImage('images/gameOver.png')
-        #gameOverImg.scale(0.07)
-        image(gameOverImg, 200,120)
+        if(player_win):
+            gameOverImg = loadImage('images/you_win.png')
+            gameOverImg.resize(260, 130)
+            image(gameOverImg, 180, 150)
+        else:
+            gameOverImg = loadImage('images/gameOver.png')
+            gameOverImg.resize(260, 130)
+            image(gameOverImg, 180, 140)
         
 def keyPressed():
     if game_over:
