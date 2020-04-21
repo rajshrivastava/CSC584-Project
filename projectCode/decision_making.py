@@ -3,6 +3,8 @@ from heapq import *
 class decisions():
     def __init__(self, map_obj, bot_movement_obj, player_obj, actionJson):
         self.game_states = ["defend_q1", "defend_q2", "defend_q3", "defend_q4", "attack_q1", "attack_q2", "attack_q3", "attack_q4"]
+        self.attack_game_states = ["attack_q1", "attack_q2", "attack_q3", "attack_q4"]
+        self.defend_game_states = ["defend_q1", "defend_q2", "defend_q3", "defend_q4"]
         self.player_position = None
         self.game_state_index = None
         self.current_game_state = None
@@ -13,6 +15,7 @@ class decisions():
         self.bot_movement_obj = bot_movement_obj
         self.player_obj = player_obj
         self.actionJson = actionJson
+        self.goap_selection_flag = 0
     
     def determine_state(self):
         new_state = None
@@ -41,6 +44,28 @@ class decisions():
             self.current_game_state = new_state
             self.state_change_flag = True
             
+    def heuristic(self, point1, point2):
+            #euclidean
+            #return (point1[0] - point2[0])*(point1[0] - point2[0]) +  (point1[1] - point2[1])*(point1[1] - point2[1]) #euclidean
+            #manhattan
+            return abs(point1[0] - point2[0]) +  abs(point1[1] - point2[1]) #manhattan
+    
+    def heuristic_select_actions(self, action_dict):
+        actions_heap = []
+        for temp_key in action_dict.keys():
+            if self.current_game_state in self.defend_game_states:
+                temp_f_value = self.heuristic(self.player_position, self.map_obj.data["key_locations"]["treasure"])
+            else:
+                temp_f_value = self.heuristic(self.player_position, self.map_obj.data["key_locations"]["safe_house"])
+            heappush(actions_heap, (-1 * (int(action_dict[temp_key]) + temp_f_value), temp_key))
+        result_actions = list()
+        for i in range(0,2):
+            temp = heappop(actions_heap)
+            # print temp[1].split(" ")[0]
+            result_actions.append(temp[1].split(" ")[0])
+        print result_actions
+        return result_actions
+    
     def simple_select_actions(self, action_dict):
         # print self.current_game_state
         actions_heap = []
@@ -53,7 +78,14 @@ class decisions():
             temp = heappop(actions_heap)
             # print temp[1].split(" ")[0]
             result_actions.append(temp[1].split(" ")[0])
+        print result_actions
         return result_actions
+    
+    def goap_actions_list(self, action_dict):
+        if self.goap_selection_flag == 0:
+            return self.simple_select_actions(action_dict)
+        else:
+            return self.heuristic_select_actions(action_dict)
 
     def game_control(self):
         self.player_position = self.player_obj.current_location
@@ -65,28 +97,28 @@ class decisions():
             
             #currently adding a hack here
             if self.current_game_state == "defend_q2":
-                self.bot_movement_obj.bot_actions_decisions = self.simple_select_actions(self.actionJson[self.current_game_state])
+                self.bot_movement_obj.bot_actions_decisions = self.goap_actions_list(self.actionJson[self.current_game_state])
                 self.bot_movement_obj.bot_actions_locations = [self.map_obj.data["key_locations"]["treasure"], [0,0]]
             elif self.current_game_state == "defend_q1":
-                self.bot_movement_obj.bot_actions_decisions = self.simple_select_actions(self.actionJson[self.current_game_state])
+                self.bot_movement_obj.bot_actions_decisions = self.goap_actions_list(self.actionJson[self.current_game_state])
                 self.bot_movement_obj.bot_actions_locations = [self.map_obj.data["key_locations"]["treasure"], [0,0]]
             elif self.current_game_state == "defend_q3":
-                self.bot_movement_obj.bot_actions_decisions = self.simple_select_actions(self.actionJson[self.current_game_state])
+                self.bot_movement_obj.bot_actions_decisions = self.goap_actions_list(self.actionJson[self.current_game_state])
                 self.bot_movement_obj.bot_actions_locations = [self.map_obj.data["key_locations"]["treasure"], [0,0]]
             elif self.current_game_state == "defend_q4":
-                self.bot_movement_obj.bot_actions_decisions = self.simple_select_actions(self.actionJson[self.current_game_state])
+                self.bot_movement_obj.bot_actions_decisions = self.goap_actions_list(self.actionJson[self.current_game_state])
                 self.bot_movement_obj.bot_actions_locations = [self.map_obj.data["key_locations"]["treasure"], self.map_obj.data["key_locations"]["treasure"]]
             elif self.current_game_state == "attack_q4":
-                self.bot_movement_obj.bot_actions_decisions = self.simple_select_actions(self.actionJson[self.current_game_state])
+                self.bot_movement_obj.bot_actions_decisions = self.goap_actions_list(self.actionJson[self.current_game_state])
                 self.bot_movement_obj.bot_actions_locations = [[0,0], [0,0]]
             elif self.current_game_state == "attack_q3":
-                self.bot_movement_obj.bot_actions_decisions = self.simple_select_actions(self.actionJson[self.current_game_state])
+                self.bot_movement_obj.bot_actions_decisions = self.goap_actions_list(self.actionJson[self.current_game_state])
                 self.bot_movement_obj.bot_actions_locations = [self.map_obj.data["key_locations"]["safe_house"], [0,0]]
             elif self.current_game_state == "attack_q1":
-                self.bot_movement_obj.bot_actions_decisions = self.simple_select_actions(self.actionJson[self.current_game_state])
+                self.bot_movement_obj.bot_actions_decisions = self.goap_actions_list(self.actionJson[self.current_game_state])
                 self.bot_movement_obj.bot_actions_locations = [self.map_obj.data["key_locations"]["safe_house"], [0,0]]
             elif self.current_game_state == "attack_q2":
-                self.bot_movement_obj.bot_actions_decisions = self.simple_select_actions(self.actionJson[self.current_game_state])
+                self.bot_movement_obj.bot_actions_decisions = self.goap_actions_list(self.actionJson[self.current_game_state])
                 self.bot_movement_obj.bot_actions_locations = [self.map_obj.data["key_locations"]["safe_house"], self.map_obj.data["key_locations"]["safe_house"]]
             self.state_change_flag = False
         else:
