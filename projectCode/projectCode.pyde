@@ -64,12 +64,12 @@ def setup():
     #world_object.draw_all_obstacles()
     map_obj = Map(worldJson)
     
-    fileData = readJson('action.json')
-    actionJson = loadJson(fileData)
-    decision_obj = decisions(map_obj, botMovement_object, player_object, actionJson)
-    
     #powerUp
     power_obj = Power(worldJson)
+    
+    fileData = readJson('action.json')
+    actionJson = loadJson(fileData)
+    decision_obj = decisions(map_obj, botMovement_object, player_object, actionJson, power_obj)
     
 def draw():
     """
@@ -88,10 +88,7 @@ def draw():
     global power_obj
     
     map_obj.drawMap()
-    
-    power_obj.draw_powerUp(0)
-    power_obj.draw_powerDown(2)
-    power_obj.draw_immunity(0)
+    power_obj.draw_powers()
     
     player_object.draw_player()
     if not game_over:      

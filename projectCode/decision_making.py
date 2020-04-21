@@ -1,7 +1,8 @@
 from heapq import *
+import random
 
 class decisions():
-    def __init__(self, map_obj, bot_movement_obj, player_obj, actionJson):
+    def __init__(self, map_obj, bot_movement_obj, player_obj, actionJson, power_obj):
         self.game_states = ["defend_q1", "defend_q2", "defend_q3", "defend_q4", "attack_q1", "attack_q2", "attack_q3", "attack_q4"]
         self.attack_game_states = ["attack_q1", "attack_q2", "attack_q3", "attack_q4"]
         self.defend_game_states = ["defend_q1", "defend_q2", "defend_q3", "defend_q4"]
@@ -16,6 +17,10 @@ class decisions():
         self.player_obj = player_obj
         self.actionJson = actionJson
         self.goap_selection_flag = 0
+        self.power_obj = power_obj
+        self.powerUP_flag = True
+        self.powerDown_flag = True
+        self.immunity_flag = True
     
     def determine_state(self):
         new_state = None
@@ -87,9 +92,22 @@ class decisions():
         else:
             return self.heuristic_select_actions(action_dict)
 
+    def activate_powerups(self):
+        if self.powerUP_flag and self.current_game_state == "defend_q2":
+            self.power_obj.activate_powerUp(random.randrange(0,4))
+            self.powerUP_flag = False
+        elif self.powerDown_flag and self.current_game_state == "attack_q4":
+            self.power_obj.activate_powerDown(random.randrange(0,4))
+            self.powerDown_flag = False
+        elif self.immunity_flag:
+            if self.current_game_state == "attack_q3" or self.current_game_state == "attack_q1":
+                self.power_obj.activate_immunity(random.randrange(0,4))
+                self.immunity_flag = False
+
     def game_control(self):
         self.player_position = self.player_obj.current_location
         self.determine_state()
+        self.activate_powerups()
         if self.state_change_flag:
             #state has been changed perform new decision making
             new_actions = self.actionJson[self.current_game_state]
