@@ -47,6 +47,7 @@ def setup():
     global botMovement_object
     global map_obj
     global decision_obj
+    global power_obj
     
     size(641, 481)
     
@@ -70,7 +71,6 @@ def setup():
     #powerUp
     power_obj = Power(worldJson)
     
-    
 def draw():
     """
     draw function for the game
@@ -85,8 +85,13 @@ def draw():
     global oneTimeChangeOnTreasureStolen
     global game_over
     global decision_obj
+    global power_obj
     
     map_obj.drawMap()
+    
+    power_obj.draw_powerUp(0)
+    power_obj.draw_powerDown(2)
+    power_obj.draw_immunity(0)
     
     player_object.draw_player()
     if not game_over:      
@@ -122,7 +127,7 @@ def draw():
     else:     #game over
         gameOverImg = loadImage('images/gameOver.png')
         #gameOverImg.scale(0.07)
-        image(gameOverImg, 100,100)
+        image(gameOverImg, 200,120)
         
 def keyPressed():
     if game_over:

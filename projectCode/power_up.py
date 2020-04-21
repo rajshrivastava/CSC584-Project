@@ -1,15 +1,31 @@
+import random
 class Power:
     def __init__(self, data):
-        self.player_powerImg = loadShape('images/player_power.png')
-        self.bot_powerImg = loadShape('images/bot_power.png')
-        self.player_power_positions = data['player_power']
-        self.bot_power_positions = data['bot_power']
-    
-    def draw_player_power(self, idx): #idx <- random index
-        x,y = self.player_power_positions[idx]
-        image(self.player_powerImg, x, y)
+        self.powerUp_img = loadImage('images/powerUp.png')
+        self.powerUp_img.resize(30,30)
+        self.powerUp_positions = data['powerUp']
         
-    def draw_bot_power(self, idx): #idx <- random index
-        x,y = self.bot_power_positions[idx]
-        image(self.bot_powerImg, x, y)
+        self.powerDown_img = loadImage('images/powerDown.png')
+        self.powerDown_img.resize(30,30)
+        self.powerDown_positions = data['powerDown']
+        
+        self.immunity_img = loadImage('images/immunity.png')
+        self.immunity_img.resize(30,30)
+        self.immunity_positions = data['immunity']
+        
+        self.isPowerUp_drawn = False
+        self.isPowerDown_drawn = False
+        self.isImmunity_drawn = False
+    
+    def draw_powerUp(self, idx): #idx <- random index
+        x,y = self.powerUp_positions[idx]
+        image(self.powerUp_img, x, y)
+        
+    def draw_powerDown(self, idx): #idx <- random index
+        x,y = self.powerDown_positions[idx]
+        image(self.powerDown_img, x, y)
+    
+    def draw_immunity(self, idx): #idx <- random index
+        x,y = self.immunity_positions[idx]
+        image(self.immunity_img, x, y)
         
