@@ -42,6 +42,7 @@ def setup():
     """
     setup function for the game
     """
+    print('Loading Game...')
     global world_object
     global player_object
     global bot_objects
@@ -71,6 +72,8 @@ def setup():
     fileData = readJson('action.json')
     actionJson = loadJson(fileData)
     decision_obj = decisions(map_obj, botMovement_object, player_object, actionJson, power_obj)
+    
+    print('GO!')
     
 def draw():
     """
@@ -136,12 +139,12 @@ def draw():
     else:     #game over
         if(player_win):
             gameOverImg = loadImage('images/you_win.png')
-            gameOverImg.resize(200, 102)
-            image(gameOverImg, 220, 189)
+            gameOverImg.resize(260, 130)
+            image(gameOverImg, 180, 150)
         else:
             gameOverImg = loadImage('images/gameOver.png')
-            gameOverImg.resize(200, 112)
-            image(gameOverImg, 220, 184)
+            gameOverImg.resize(260, 130)
+            image(gameOverImg, 180, 140)
         
 def keyPressed():
     if game_over:

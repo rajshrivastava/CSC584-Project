@@ -110,7 +110,7 @@ class Player():
     def draw_player(self):
         # shape(self.img, self.current_location[0]-25, self.current_location[1]-25)
         shape(self.img, self.current_location[0], self.current_location[1])
-    
+        
     def player_center(self):
         return (self.current_location[0]+25, self.current_location[1]+25)
 
@@ -194,7 +194,7 @@ class BotMovement():
                 'probability': 0,
             }
         }
-        print(width, height)
+        #print(width, height)
         self.pathFinderObject = pathFinder(width, height)
         self.treasureStolen = False
     

@@ -141,22 +141,23 @@ class Map:
         return self.collision_detection(player_loc, self.safehousePosition, 50)
     
     def playerCollisionWithPower(self, player_obj, power_obj, bots):
-        if power_obj.isPowerUp_active and self.collision_detection(player_obj.player_center(), power_obj.powerUp_location, 20):
-            print("PLAYER GOT POWER UP. SPEED++")
-            player_obj.speed+=1 # increase player's speed
+        distance = 40
+        if power_obj.isPowerUp_active and self.collision_detection(player_obj.player_center(), power_obj.powerUp_location, distance):
+            print("Power Up Gained!  PLAYER SPEED INCREASED")
+            player_obj.speed+=2 # increase player's speed
             power_obj.isPowerUp_active = False # deactivate power-up so that it is not drawn
             return True
         
-        if power_obj.isPowerDown_active and self.collision_detection(player_obj.player_center(), power_obj.powerDown_location, 20):
-            print("PLAYER GOT POWER DOWN. BOT_SPEED--")
+        if power_obj.isPowerDown_active and self.collision_detection(player_obj.player_center(), power_obj.powerDown_location, distance):
+            print("Power Up Gained!  GUARDS SPEED DECREASED")
             for bot in bots:
                 bot.speed-=1 # decrease bot's speed
             power_obj.isPowerDown_active = False # deactivate power-up so that it is not drawn
             return True
         
-        if power_obj.isImmunity_active and self.collision_detection(player_obj.player_center(), power_obj.immunity_location, 20):
+        if power_obj.isImmunity_active and self.collision_detection(player_obj.player_center(), power_obj.immunity_location, distance):
             # take steps to apply immunity power
-            print("PLAYER GOT immunity. BOT_SPEED--")
+            print("Power Up Gained!  PLAYER IMMUNE TO OBSTACLES")
             player_obj.immunity = True
             power_obj.isImmunity_active = False # deactivate power-up so that it is not drawn
             return True
