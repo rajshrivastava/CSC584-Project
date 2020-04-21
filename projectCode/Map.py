@@ -67,6 +67,7 @@ class Map:
             endShape(CLOSE)
     
     def drawStaticKeys(self):    
+        fill(100)
         image(self.safehouseImg, self.safehousePosition[0]-50, self.safehousePosition[1]-50, self.safehouseImg.height/2, self.safehouseImg.width/2)
         image(self.treasureImg, self.treasurePosition[0]-25, self.treasurePosition[1]-25, self.treasureImg.height/2, self.treasureImg.width/2)
         
@@ -124,7 +125,7 @@ class Map:
             if("dead" in obj):
                 obstacles.append(self.data['key_locations'][obj])
         for obstacle in obstacles:
-            if(self.collision_detection(player_loc, obstacle, 40)):
+            if(self.collision_detection(player_loc, obstacle, 30)):
                 return True
         # print("No collision with obstacles")
         for bot in bots:
@@ -132,3 +133,33 @@ class Map:
                 return True
         # print("No collision with bots")
         return False
+    
+    def playerBackHome(self, player_loc):
+        """
+        pass current player's location to check if he reached back home
+        """
+        return self.collision_detection(player_loc, self.safehousePosition, 50)
+    
+    def playerCollisionWithPower(self, player_obj, power_obj, bots):
+        if power_obj.isPowerUp_active and self.collision_detection(player_obj.player_center(), power_obj.powerUp_location, 20):
+            print("PLAYER GOT POWER UP. SPEED++")
+            player_obj.speed+=1 # increase player's speed
+            power_obj.isPowerUp_active = False # deactivate power-up so that it is not drawn
+            return True
+        
+        if power_obj.isPowerDown_active and self.collision_detection(player_obj.player_center(), power_obj.powerDown_location, 20):
+            print("PLAYER GOT POWER DOWN. BOT_SPEED--")
+            for bot in bots:
+                bot.speed-=1 # decrease bot's speed
+            power_obj.isPowerDown_active = False # deactivate power-up so that it is not drawn
+            return True
+        
+        if power_obj.isImmunity_active and self.collision_detection(player_obj.player_center(), power_obj.immunity_location, 20):
+            # take steps to apply immunity power
+            print("PLAYER GOT immunity. BOT_SPEED--")
+            player_obj.immunity = True
+            power_obj.isImmunity_active = False # deactivate power-up so that it is not drawn
+            return True
+        return False
+    
+    

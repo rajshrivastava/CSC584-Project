@@ -83,12 +83,15 @@ class Player():
         self.speed = 8
         self.img = loadShape('images/player.svg')
         self.img.scale(0.07)
-    
+        self.immunity = False
+        
     def update_current_location(self, new_location):
         """
         Function that updates the new_location and also
         stores the previous one for reference
         """
+        if (not self.immunity and get(new_location[0], new_location[1]) != -1):
+            return
         self.last_location = self.current_location
         self.current_location = new_location
 
@@ -107,7 +110,9 @@ class Player():
     def draw_player(self):
         # shape(self.img, self.current_location[0]-25, self.current_location[1]-25)
         shape(self.img, self.current_location[0], self.current_location[1])
-
+    
+    def player_center(self):
+        return (self.current_location[0]+25, self.current_location[1]+25)
 
 class Bot():
     """

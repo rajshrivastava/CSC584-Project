@@ -32,13 +32,13 @@ class Power:
     def draw_powers(self):
         if self.isPowerUp_active:
             x,y = self.powerUp_location
-            image(self.powerUp_img, x, y)
+            image(self.powerUp_img, x-15, y-15)
         
         if self.isPowerDown_active:
             x,y = self.powerDown_location
-            image(self.powerDown_img, x, y)
+            image(self.powerDown_img, x-15, y-15)
         
         if self.isImmunity_active:
             x,y = self.immunity_location
-            image(self.immunity_img, x, y)
+            image(self.immunity_img, x-15, y-15)
         
