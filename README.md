@@ -2,6 +2,20 @@
 
 An AI game built from scratch in Python with extensive object-oriented programming. Integrated physics like movements, acceleration, and collision detection. Simulated human player pursuing a treasure against AI guard bots using path-finding of A* and RBFS and decision-making algorithms of Goal-Oriented Action Planning using Iterative Deepening A* and Behavior Trees.
 
+- [Game development: Treasure Hunt](#game-development--treasure-hunt)
+  * [Overview](#overview)
+  * [Game Design](#game-design)
+    + [Path-finding](#path-finding)
+      - [A-star Algorithm](#a-star-algorithm)
+      - [Recursive Best First Search](#recursive-best-first-search)
+    + [Decision-making](#decision-making)
+      - [Behavior Trees](#behavior-trees)
+      - [Goal Oriented Action Planning (GOAP) using Iterative deepening A* (IDA*)](#goal-oriented-action-planning--goap--using-iterative-deepening-a---ida--)
+  * [Demonstration](#demonstration)
+
+<small><i><a href='http://ecotrust-canada.github.io/markdown-toc/'>Table of contents generated with markdown-toc</a></i></small>
+
+
 ## Overview
 It is a game equipped with artificial intelligence involving a human player and some AI bots. The movement of the bots would be planned and automated through AI algorithms. This is a zero-sum game wherein the aim of the human player is to steal the treasure from the haunted house and bring it back to the safe-house. The treasure is initially guarded by one or more AI bots. The computer bots use decision making algorithm to decide among various actions like chasing the human player to kill it, defend the treasure or just wander aimlessly depending upon the state of the game. The decisions are supported by pathfinding algorithms from their position to the prospective destinations. There are some static and some randomly moving obstacles, and random power-ups in the game.
 
